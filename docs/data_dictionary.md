@@ -57,11 +57,14 @@ These fields are not required in raw input. REC will calculate them in later mil
 | `decision_triggers` | list of strings | All explicit rule codes activated for the row. |
 | `decision_reasons` | list of strings | Human-readable explanations corresponding to the activated rules. |
 | `rule_version` | string | Version of the rules used for the decision. |
-| `review_priority` | number or category | Later-derived ordering value for cases requiring review. Its method must be documented before implementation. |
+| `review_priority` | structured ordinal components | Explainable queue-ordering components: final-decision tier, severity rank, confirmed risk-flag count, disagreement magnitude, and evaluator confidence. Original row order is the stable final tie-breaker. |
+| `priority_reasons` | list of strings | Readable explanations of the components affecting a record's inspection priority. |
 
 Serialization of list-valued fields in CSV will be defined before the export milestone. Internally, trigger codes and explanations should remain separate values rather than an ambiguous prose string.
 
 REC retains all activated trigger codes and their reasons for each record, regardless of decision precedence. For example, a record with critical severity, low evaluator confidence, and substantial score disagreement receives `FAIL`, but all three triggers remain visible in `decision_triggers` and `decision_reasons`.
+
+The human inspection queue contains both `HUMAN_REVIEW` records requiring human judgment and `FAIL` records requiring mandatory inspection and remediation. Queue inclusion never changes the calculated decision: a queued `FAIL` remains `FAIL` and is ordered before `HUMAN_REVIEW` cases. Priority components and their reasons remain separate and inspectable rather than being collapsed into an opaque score.
 
 ## Consistency rules
 

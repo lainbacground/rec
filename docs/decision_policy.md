@@ -76,7 +76,36 @@ Empty/null must not be interpreted, normalized, or defaulted to `false`. Version
 
 `HUMAN_REVIEW` is a routing decision, not a final statement that the response is defective. A later workflow may record the review status and resolution, but imported `review_status` values cannot override REC's calculated decision.
 
-Review prioritization is intentionally deferred. Before Milestone 4, the project must define whether priority is ordinal or numeric and how severity, risk flags, disagreement, and confidence affect ordering.
+### Human inspection queue
+
+The inspection queue includes both `HUMAN_REVIEW` and `FAIL` records, but for
+different purposes:
+
+- `HUMAN_REVIEW` records enter the queue because uncertainty or a material
+  concern requires human judgment.
+- `FAIL` records enter the queue for mandatory inspection, auditability, and
+  remediation of a confirmed critical, safety, or privacy failure.
+
+Inspection does not downgrade, reconsider, or automatically change a `FAIL`
+decision. `FAIL` remains the final calculated decision unless a future,
+separately defined workflow explicitly introduces versioned re-evaluation.
+Including these records ensures that confirmed failures are visible to a human
+and can receive an appropriate operational response rather than disappearing
+from a queue intended to surface actionable cases.
+
+Review priority is deterministic and ordinal rather than an opaque combined
+risk score. Records are ordered lexicographically by:
+
+1. final decision, with `FAIL` before `HUMAN_REVIEW`;
+2. error severity, from higher to lower;
+3. number of confirmed safety and privacy failure flags, from more to fewer;
+4. absolute human/AI score disagreement, from larger to smaller;
+5. evaluator confidence, from lower to higher; and
+6. original evaluated-row order as the stable tie-breaker.
+
+The queue exposes these components and readable priority reasons. This method
+is designed for explainability and remediation, not to reproduce any target
+intervention rate.
 
 ## Changing the policy
 

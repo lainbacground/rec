@@ -60,11 +60,40 @@ These fields are not required in raw input. REC will calculate them in later mil
 | `review_priority` | structured ordinal components | Explainable queue-ordering components: final-decision tier, severity rank, confirmed risk-flag count, disagreement magnitude, and evaluator confidence. Original row order is the stable final tie-breaker. |
 | `priority_reasons` | list of strings | Readable explanations of the components affecting a record's inspection priority. |
 
-Serialization of list-valued fields in CSV will be defined before the export milestone. Internally, trigger codes and explanations should remain separate values rather than an ambiguous prose string.
+CSV serialization is defined in the generated audit output contract below. Internally, trigger codes and explanations remain separate values rather than an ambiguous prose string.
 
 REC retains all activated trigger codes and their reasons for each record, regardless of decision precedence. For example, a record with critical severity, low evaluator confidence, and substantial score disagreement receives `FAIL`, but all three triggers remain visible in `decision_triggers` and `decision_reasons`.
 
 The human inspection queue contains both `HUMAN_REVIEW` records requiring human judgment and `FAIL` records requiring mandatory inspection and remediation. Queue inclusion never changes the calculated decision: a queued `FAIL` remains `FAIL` and is ordered before `HUMAN_REVIEW` cases. Priority components and their reasons remain separate and inspectable rather than being collapsed into an opaque score.
+
+### Generated audit output contract
+
+All generated audit artifacts must be written under `outputs/` or one of its
+subdirectories. Raw input files must never be overwritten. The `outputs/`
+directory is generated workspace content and is normally ignored by version
+control.
+
+A valid dataset with zero rows still produces the complete artifact set. CSV
+files retain their documented headers, `audit_summary.md` remains complete,
+and each of the three PNG figures displays an explicit no-data state rather
+than implying that observations exist.
+
+`error_summary.csv` represents a missing `error_type` as an empty group value.
+REC does not invent a taxonomy label for unclassified records.
+
+Generated audit content does not automatically include a wall-clock timestamp,
+because that would make otherwise identical analytical runs differ. Callers
+may provide stable metadata such as a dataset name or run identifier when it
+helps distinguish or reproduce a run.
+
+CSV output uses these serialization conventions:
+
+- list-valued trigger and reason fields are compact JSON arrays, preserving
+  their order and allowing unambiguous parsing;
+- `None` is an empty CSV field;
+- booleans are lowercase `true` or `false`; and
+- metrics undefined for an empty dataset are empty CSV fields and appear as
+  `N/A` in the Markdown summary.
 
 ## Consistency rules
 

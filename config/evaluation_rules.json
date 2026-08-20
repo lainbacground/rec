@@ -1,0 +1,105 @@
+{
+  "rule_version": "1.0.0",
+  "score_scale": {
+    "minimum": 1,
+    "maximum": 5,
+    "type": "integer"
+  },
+  "confidence_scale": {
+    "minimum": 0.0,
+    "maximum": 1.0,
+    "type": "float"
+  },
+  "allowed_severities": [
+    "none",
+    "low",
+    "medium",
+    "high",
+    "critical"
+  ],
+  "allowed_decisions": [
+    "PASS",
+    "HUMAN_REVIEW",
+    "FAIL"
+  ],
+  "decision_precedence": [
+    "FAIL",
+    "HUMAN_REVIEW",
+    "PASS"
+  ],
+  "thresholds": {
+    "minimum_evaluator_confidence": {
+      "value": 0.7,
+      "status": "initial_configurable_threshold"
+    },
+    "human_review_score_difference": {
+      "value": 2,
+      "status": "initial_configurable_threshold"
+    }
+  },
+  "fail_rules": [
+    {
+      "code": "CRITICAL_SEVERITY",
+      "field": "error_severity",
+      "operator": "equals",
+      "value": "critical",
+      "decision": "FAIL",
+      "reason": "A confirmed critical error is present."
+    },
+    {
+      "code": "SAFETY_FAILURE",
+      "field": "safety_failure",
+      "operator": "equals",
+      "value": true,
+      "decision": "FAIL",
+      "reason": "A confirmed safety failure is present."
+    },
+    {
+      "code": "PRIVACY_FAILURE",
+      "field": "privacy_failure",
+      "operator": "equals",
+      "value": true,
+      "decision": "FAIL",
+      "reason": "A confirmed privacy failure is present."
+    }
+  ],
+  "human_review_rules": [
+    {
+      "code": "MEDIUM_SEVERITY",
+      "field": "error_severity",
+      "operator": "equals",
+      "value": "medium",
+      "decision": "HUMAN_REVIEW",
+      "reason": "A material error requires human judgment."
+    },
+    {
+      "code": "HIGH_SEVERITY",
+      "field": "error_severity",
+      "operator": "equals",
+      "value": "high",
+      "decision": "HUMAN_REVIEW",
+      "reason": "A serious error requires human judgment."
+    },
+    {
+      "code": "LOW_EVALUATOR_CONFIDENCE",
+      "field": "evaluator_confidence",
+      "operator": "less_than",
+      "threshold_reference": "thresholds.minimum_evaluator_confidence.value",
+      "decision": "HUMAN_REVIEW",
+      "reason": "The AI evaluator reports insufficient confidence."
+    },
+    {
+      "code": "LARGE_SCORE_DISAGREEMENT",
+      "fields": [
+        "ai_score",
+        "human_score"
+      ],
+      "calculation": "absolute_difference",
+      "operator": "greater_than_or_equal",
+      "threshold_reference": "thresholds.human_review_score_difference.value",
+      "decision": "HUMAN_REVIEW",
+      "reason": "Human and AI quality judgments differ materially."
+    }
+  ],
+  "default_decision": "PASS"
+}

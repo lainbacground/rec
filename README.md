@@ -117,6 +117,7 @@ rather than fabricated rates.
 ## Project structure
 
 ```text
+.github/workflows/tests.yml   Python 3.12 continuous integration
 config/evaluation_rules.json   Versioned thresholds and decision rules
 docs/data_dictionary.md        Input, derived-field, and output contracts
 docs/decision_policy.md        Trigger, precedence, and queue methodology
@@ -156,6 +157,12 @@ PYTHONPATH=src pytest -q
 The suite covers validation, metric denominators, decision boundaries and
 precedence, queue stability, serialization, repeated-run determinism, empty
 datasets, and valid PNG generation.
+
+## Continuous integration
+
+GitHub Actions runs the full test suite on every push and pull request using
+Python 3.12. The workflow installs the committed requirements and invokes the
+same `PYTHONPATH=src python -m pytest -q` test command used locally.
 
 ## Run the synthetic sample audit
 

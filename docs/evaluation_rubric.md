@@ -58,7 +58,7 @@ The initial review threshold is `0.70`. This is a methodological starting point,
 
 ## Human and AI evaluator comparison
 
-Later milestones will calculate:
+REC calculates these evaluator-comparison fields and preserves them in audit output:
 
 - exact agreement;
 - agreement within one score point;

@@ -39,7 +39,7 @@ These fields may be absent or empty. Their absence must not silently be interpre
 | `human_notes` | string | Free text | Human evaluator's supporting rationale or context. |
 | `review_status` | string | `NOT_REVIEWED`, `IN_REVIEW`, `RESOLVED`, or empty | Optional workflow annotation imported from an existing review process. It does not determine REC's decision. |
 
-Boolean CSV values should be written as lowercase `true` or `false`. The validation milestone will define whether harmless case variations can be normalized.
+Boolean CSV values should be written as lowercase `true` or `false`. Validation safely normalizes surrounding whitespace and harmless case variations while preserving empty values as unknown.
 
 For both risk flags, empty/null and `false` have different meanings and must remain distinguishable. REC must never convert an empty/null safety or privacy value to `false`: unknown means no assessment result is available, while `false` records an explicit assessment with no failure found. Unknown values do not automatically trigger `HUMAN_REVIEW` in Version 1, but a future dataset profile may configure complete assessment as a requirement.
 
